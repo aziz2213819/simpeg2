@@ -82,7 +82,7 @@ class EmployeeController extends Controller
             'tmt_end'       => 'nullable|date|after_or_equal:tmt_start',
             'tmt_kgb'       => 'required|date|after_or_equal:tmt_start',
             'type'          => 'required|in:ASN,Non ASN',
-            'position_id'   => 'nullable|exists:positions,id',
+            'position_id'   => 'required|exists:positions,id',
             'rank_grade_id' => 'nullable|exists:rank_grades,id',
         ];
 
@@ -246,6 +246,27 @@ class EmployeeController extends Controller
                 'type'          => $validatedData['type'],
                 'position_id'   => $validatedData['position_id'] ?? null,
                 'rank_grade_id' => $validatedData['rank_grade_id'] ?? null,
+            ]);
+
+            $user = User::where('employee_id', $pegawai->id)->first();
+            // 1. Pisahkan nama berdasarkan tanda koma, dan ambil bagian pertamanya saja (index 0)
+            // "ACHMAD SIDDIK, SAP, MM" -> menjadi "ACHMAD SIDDIK"
+            $nameWithoutTitle = explode(',', $validatedData['name'])[0];
+
+            // 2. Bersihkan nama HANYA dari karakter selain huruf (menghapus spasi, titik, kutip, dll)
+            // "MOH. YAMIN" -> menjadi "mohyamin"
+            // "ACHMAD SIDDIK" -> menjadi "achmadsiddik"
+            $cleanName = strtolower(preg_replace('/[^a-zA-Z]/', '', $nameWithoutTitle));
+
+            // 3. Ambil tahun lahir (contoh: 1985)
+            $birthYear = date('Y', strtotime($validatedData['birth_date']));
+
+            // 4. Gabungkan agar unik
+            $uniqueUsername = $cleanName . $birthYear;
+
+            $user->update([
+                'name' => $validatedData['name'],
+                // 'email' => "{$uniqueUsername}@gmail.com",
             ]);
         });
 

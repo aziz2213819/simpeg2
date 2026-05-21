@@ -28,7 +28,7 @@ Route::get('/lokasi-tps', [TamuController::class, 'tpsWarga'])->name('tamu.tps')
 
 
 // Detail Pengaduan dipindah ke LUAR agar warga bisa lihat progress lewat link/ID Tracking
-Route::get('/pengaduan/{pengaduan}', [ReportController::class, 'show'])->name('admin.pengaduan.show');
+Route::get('/pengaduan/{pengaduan}', [ReportController::class, 'show'])->name('pengaduan.show');
 
 
 // --- AKSES ADMIN (DASHBOARD UMUM) ---

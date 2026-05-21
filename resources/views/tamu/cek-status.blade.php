@@ -26,7 +26,7 @@
                 </div>
 
                 @forelse($allReports as $item)
-                <div onclick="window.location.href='{{ route('admin.pengaduan.show', $item->id) }}'" class="cursor-pointer">
+                <div onclick="window.location.href='{{ route('pengaduan.show', $item->id) }}'" class="cursor-pointer">
                     <flux:card class="p-0 overflow-hidden border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-md transition-shadow">
                         
                         {{-- Meta Info --}}
@@ -119,7 +119,7 @@
                                     size="xs" 
                                     icon="share" 
                                     class="text-zinc-400 border shadow-none px-3"
-                                    onclick="copyShareLink('{{ route('admin.pengaduan.show', $item->id) }}')"
+                                    onclick="copyShareLink('{{ route('pengaduan.show', $item->id) }}')"
                                 >
                                     Bagikan
                                 </flux:button>
@@ -132,7 +132,7 @@
                                     </span>
 
                                     {{-- Tombol Komentar --}}
-                                    <a href="{{ route('admin.pengaduan.show', $item->id) }}#comments" class="no-underline" wire:navigate>
+                                    <a href="{{ route('pengaduan.show', $item->id) }}#comments" class="no-underline" wire:navigate>
                                         <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-tighter bg-orange-500 text-white shadow-sm hover:bg-orange-600 transition-colors cursor-pointer flex items-center gap-2">
                                             <span class="bg-white/20 px-1 py-0.5 rounded text-[9px]">
                                                 {{ $item->comments_count ?? 0 }}

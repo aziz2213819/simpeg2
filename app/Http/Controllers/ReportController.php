@@ -70,7 +70,7 @@ class ReportController extends Controller
         $pengaduan->load(['user', 'comments.user']);
         
         // Dikirim sebagai 'item' agar sesuai dengan kodingan Blade Anda sebelumnya.
-        return view('admin.pengaduan.show', ['item' => $pengaduan]);
+        return view('pengaduan.show', ['item' => $pengaduan]);
     }
 
     /**

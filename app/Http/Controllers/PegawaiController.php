@@ -159,6 +159,10 @@ class PegawaiController extends Controller
 
     public function notificationShow(Notification $notification)
     {
+        // Pastikan hanya pegawai yang bersangkutan yang bisa lihat
+        if ($notification->employee_id !== auth()->user()->employee->id) {
+            abort(403, 'Akses ditolak.');
+        }
         if (!$notification->is_read) {
             $notification->is_read = true;
             $notification->save();
@@ -209,6 +213,10 @@ class PegawaiController extends Controller
 
     public function read($id)
     {
+        // Pastikan hanya pegawai yang bersangkutan yang bisa lihat
+        if (Notification::findOrFail($id)->employee_id !== auth()->user()->employee->id) {
+            abort(403, 'Akses ditolak.');
+        }
         $notif = Notification::findOrFail($id);
         $notif->update([
             'is_read' => true

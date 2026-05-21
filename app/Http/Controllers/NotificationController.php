@@ -55,7 +55,7 @@ class NotificationController extends Controller
     {
         $rules = [
             'employee_id' => 'required|exists:employees,id',
-            'type'        => 'required|string|max:50',
+            'type'        => 'required|in:pangkat,gaji_berkala,pensiun',
             'message'     => 'required|string',
             'requires_sk' => 'nullable|boolean',
         ];

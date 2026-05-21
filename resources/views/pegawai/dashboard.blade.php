@@ -74,7 +74,7 @@
             {{-- Pintasan Aksi --}}
             <flux:card
                 class="flex items-center gap-4 p-6! border-t-4 border-t-blue-500 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
-                onclick="window.location.href='{{ route('notifikasi.index') }}'">
+                onclick="window.location.href='{{ route('pegawai.notifikasi') }}'">
                 <div class="bg-blue-50 text-blue-600 p-3 rounded-full dark:bg-blue-900/30">
                     <flux:icon.envelope-open class="w-7 h-7" />
                 </div>
