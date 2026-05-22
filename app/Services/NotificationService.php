@@ -35,8 +35,6 @@ class NotificationService
     public function checkAndGenerateNotifications($users)
     {
         $now = Carbon::parse(now())->startOfDay();
-        // dd($now . "notif");
-        // $debugNotif = [];
 
         // 1. Kumpulkan semua ID Pegawai yang valid
         $employeeIds = [];
@@ -76,17 +74,6 @@ class NotificationService
                     continue;
                 }
 
-                // if ($type === 'pangkat') {
-                // $nextRank = $this->promotionService->getNextRank($employee->rank_grade_id);
-                // if (!$nextRank) {
-                //     continue;
-                // }
-                // $nextGol = $this->promotionService->getGolongan($nextRank);
-                // if (!$this->promotionService->canPromote($employee, $nextGol)) {
-                //     continue;
-                // }
-                // }
-
                 foreach ($schedules as $schedule) {
                     $triggerDate = $targetDate->copy()->{$schedule['method']}($schedule['value']);
                     if ($now->greaterThanOrEqualTo($triggerDate)) {
@@ -105,13 +92,6 @@ class NotificationService
                         }
 
                         if (! $alreadyNotified) {
-                            // $debugNotif[] = [
-                            //     'nama' => $employee->name,
-                            //     'jenis' => Str::headline($type),
-                            //     'kategori_notif' => 'H-' . $schedule['label'],
-                            //     'tanggal_target' => $targetDate->format('d M Y'),
-                            //     'tanggal_trigger' => $triggerDate->format('d M Y'),
-                            // ];
 
                             $newTitle = 'Peringatan H-'.$schedule['label'].' '.Str::headline($type).' (pada '.$targetDate->format('Y-m-d').')';
 
@@ -126,9 +106,6 @@ class NotificationService
                             }
 
                             $status = null;
-                            // if ($type === 'pangkat' && $needsSK) {
-                            //     $status = 'pending';
-                            // }
 
                             Notification::create([
                                 'employee_id' => $employee->id,
@@ -143,7 +120,6 @@ class NotificationService
                 }
             }
         }
-        // dd($debugNotif);
     }
 
     /**
