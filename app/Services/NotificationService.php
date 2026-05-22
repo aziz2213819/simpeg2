@@ -3,14 +3,14 @@
 namespace App\Services;
 
 use App\Models\Employee;
-use Illuminate\Support\Carbon;
 use App\Models\Notification;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class NotificationService
 {
-
     protected PromotionService $promotionService;
+
     protected PensiunService $pensiunService;
 
     public function __construct(PromotionService $promotionService, PensiunService $pensiunService)
@@ -22,13 +22,13 @@ class NotificationService
     // Pemetaan jadwal spesifik untuk masing-masing tipe notifikasi
     protected array $typeSchedules = [
         'pangkat' => [
-            ['method' => 'subMonths', 'value' => 8, 'label' => '8 Bulan']
+            ['method' => 'subMonths', 'value' => 8, 'label' => '8 Bulan'],
         ],
         'gaji_berkala' => [
-            ['method' => 'subMonths', 'value' => 2, 'label' => '2 Bulan']
+            ['method' => 'subMonths', 'value' => 2, 'label' => '2 Bulan'],
         ],
         'pensiun' => [
-            ['method' => 'subYears', 'value' => 1, 'label' => '1 Tahun']
+            ['method' => 'subYears', 'value' => 1, 'label' => '1 Tahun'],
         ],
     ];
 
@@ -60,31 +60,37 @@ class NotificationService
 
         foreach ($users as $user) {
             $employee = $user->employee;
-            if (!$employee) continue;
+            if (! $employee) {
+                continue;
+            }
 
             foreach ($this->typeSchedules as $type => $schedules) {
 
                 $targetDate = $this->calculateTargetDate($employee, $type);
 
-                if (!$targetDate) {
+                if (! $targetDate) {
+                    continue;
+                }
+
+                if ($targetDate->lte($now)) {
                     continue;
                 }
 
                 // if ($type === 'pangkat') {
-                    // $nextRank = $this->promotionService->getNextRank($employee->rank_grade_id);
-                    // if (!$nextRank) {
-                    //     continue;
-                    // }
-                    // $nextGol = $this->promotionService->getGolongan($nextRank);
-                    // if (!$this->promotionService->canPromote($employee, $nextGol)) {
-                    //     continue;
-                    // }
+                // $nextRank = $this->promotionService->getNextRank($employee->rank_grade_id);
+                // if (!$nextRank) {
+                //     continue;
+                // }
+                // $nextGol = $this->promotionService->getGolongan($nextRank);
+                // if (!$this->promotionService->canPromote($employee, $nextGol)) {
+                //     continue;
+                // }
                 // }
 
                 foreach ($schedules as $schedule) {
                     $triggerDate = $targetDate->copy()->{$schedule['method']}($schedule['value']);
                     if ($now->greaterThanOrEqualTo($triggerDate)) {
-                        
+
                         $alreadyNotified = false;
                         $searchKeyword = $targetDate->format('Y-m-d');
 
@@ -98,7 +104,7 @@ class NotificationService
                             }
                         }
 
-                        if (!$alreadyNotified) {
+                        if (! $alreadyNotified) {
                             // $debugNotif[] = [
                             //     'nama' => $employee->name,
                             //     'jenis' => Str::headline($type),
@@ -107,11 +113,11 @@ class NotificationService
                             //     'tanggal_trigger' => $triggerDate->format('d M Y'),
                             // ];
 
-                            $newTitle = 'Peringatan H-' . $schedule['label'] . ' ' . Str::headline($type) . ' (pada ' . $targetDate->format('Y-m-d') . ')';
+                            $newTitle = 'Peringatan H-'.$schedule['label'].' '.Str::headline($type).' (pada '.$targetDate->format('Y-m-d').')';
 
                             $existingSK = Notification::where('employee_id', $employee->id)
                                 ->where('type', 'pangkat')
-                                ->where('title', 'like', '%' . $targetDate->format('Y-m-d') . '%')
+                                ->where('title', 'like', '%'.$targetDate->format('Y-m-d').'%')
                                 ->whereIn('status', ['pending', 'rejected'])
                                 ->exists();
 
@@ -126,10 +132,10 @@ class NotificationService
 
                             Notification::create([
                                 'employee_id' => $employee->id,
-                                'type'        => $type,
-                                'title'       => $newTitle,
-                                'message'     => "Sistem mendeteksi jadwal " . Str::headline($type) . " untuk {$employee->name} jatuh pada " . $targetDate->format('d M Y') . ". Mohon segera persiapkan berkas yang dibutuhkan.",
-                                'status'      => null,
+                                'type' => $type,
+                                'title' => $newTitle,
+                                'message' => 'Sistem mendeteksi jadwal '.Str::headline($type)." untuk {$employee->name} jatuh pada ".$targetDate->format('d M Y').'. Mohon segera persiapkan berkas yang dibutuhkan.',
+                                'status' => null,
                             ]);
                             $notifCache[$employee->id][$type][] = $newTitle;
                         }
@@ -148,22 +154,31 @@ class NotificationService
         switch ($type) {
             case 'pangkat':
                 // Kelipatan 4 Tahun dari TMT
-                if (!$employee->tmt_start) return null;
+                if (! $employee->tmt_start) {
+                    return null;
+                }
+
                 return $this->promotionService->getNextTargetDate($employee);
-                
+
             case 'gaji_berkala':
                 // Kelipatan 1 Bulan dari TMT
-                if (!$employee->tmt_kgb) return null;
+                if (! $employee->tmt_kgb) {
+                    return null;
+                }
                 $tmt = Carbon::parse($employee->tmt_kgb)->startOfDay();
                 $targetDate = $tmt->copy()->addYears(2);
+
                 return $targetDate;
 
             case 'pensiun':
                 // Umur 60 Tahun
-                if (!$employee->birth_date) return null;
-                
+                if (! $employee->birth_date) {
+                    return null;
+                }
+
                 $bday = Carbon::parse($employee->birth_date)->startOfDay();
                 $umurPensiun = $this->pensiunService->getPensiunNumber($employee);
+
                 return $bday->copy()->addYears($umurPensiun);
 
             default:
