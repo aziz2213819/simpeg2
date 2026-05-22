@@ -115,14 +115,18 @@ class ReportController extends Controller
     public function destroy(Report $pengaduan)
     {
         try {
-            // 1. Hapus file foto dari storage jika ada untuk menghemat kapasitas server.
-            if ($pengaduan->foto_bukti && Storage::disk('public')->exists($pengaduan->foto_bukti)) {
-                Storage::disk('public')->delete($pengaduan->foto_bukti);
-            }
+            \Illuminate\Support\Facades\DB::transaction(function () use ($pengaduan) {
+                // 1. Hapus file foto dari storage jika ada untuk menghemat kapasitas server.
+                if ($pengaduan->foto_bukti && Storage::disk('public')->exists($pengaduan->foto_bukti)) {
+                    Storage::disk('public')->delete($pengaduan->foto_bukti);
+                }
 
-            // 2. Hapus data laporan.
-            // Jika migration Anda menggunakan onDelete('cascade'), komentar akan terhapus otomatis.
-            $pengaduan->delete();
+                // 2. Explicitly delete comments before deleting the report
+                $pengaduan->comments()->delete();
+
+                // 3. Hapus data laporan.
+                $pengaduan->delete();
+            });
 
             return redirect()->route('admin.pengaduan.index')->with('success', 'Laporan berhasil dihapus secara permanen.');
             

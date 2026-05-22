@@ -1,8 +1,13 @@
 <x-layouts::app :title="__('Edit Notifikasi')">
     <div class="p-6 space-y-6">
         <flux:card>
-            <div class="mb-6">
-                <flux:heading size="lg">Edit Pesan Notifikasi</flux:heading>
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <flux:heading size="lg">Edit Pesan Notifikasi</flux:heading>
+                </div>
+                <flux:button href="{{ route('notifikasi.index') }}" variant="ghost" icon="arrow-left" wire:navigate>
+                    Kembali
+                </flux:button>
             </div>
 
             <form action="{{ route('notifikasi.update', $notifikasi->id) }}" method="POST" class="space-y-6">

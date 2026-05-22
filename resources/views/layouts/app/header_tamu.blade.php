@@ -16,8 +16,8 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}" />
+    <script src="{{ asset('leaflet/leaflet.js') }}"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance

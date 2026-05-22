@@ -18,17 +18,17 @@
                             <input type="hidden" name="rank_grade_id" value="{{ request('rank_grade_id') }}">
                             <input type="hidden" name="education_level" value="{{ request('education_level') }}">
                             <input type="hidden" name="gender" value="{{ request('gender') }}">
-                            <flux:button variant="primary" type="submit" class="cursor-pointer bg-emerald-600">
+                            <flux:button type="submit">
                                 Export Excel
                             </flux:button>
                         </form>
                         <form action="{{ route('pegawai.kgb.pdf') }}" method="GET" target="_blank">
-                            <flux:button type="submit" variant="primary" class="cursor-pointer bg-emerald-600">
+                            <flux:button type="submit">
                                 Export KGB
                             </flux:button>
                         </form>
                         <form action="{{ route('pegawai.pensiun.pdf') }}" method="GET" target="_blank">
-                            <flux:button type="submit" variant="primary" class="cursor-pointer bg-emerald-600">
+                            <flux:button type="submit">
                                 Export Pensiun
                             </flux:button>
                         </form>

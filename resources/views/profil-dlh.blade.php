@@ -26,7 +26,7 @@
             {{-- VISI --}}
             <div class="space-y-6">
                 <h2 class="text-3xl font-black uppercase border-b-4 border-emerald-600 inline-block">Visi</h2>
-                <div class="bg-zinc-900 text-white p-8 rounded-2xl shadow-2xl relative overflow-hidden">
+                <div class="dark:bg-zinc-900 p-8 rounded-2xl shadow-2xl relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-4 opacity-10">
                         <svg class="w-20 h-20" fill="currentColor" viewBox="0 0 24 24">
                             <path
@@ -50,7 +50,7 @@
                             'Meningkatkan kualitas ruang terbuka hijau dan keanekaragaman hayati.',
                             'Mendorong partisipasi aktif masyarakat dalam pelestarian lingkungan.'
                         ] as $index => $misi)
-                        <li class="flex gap-4 items-start bg-white dark:bg-zinc-800 p-4 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm">
+                        <li class="flex gap-4 items-start bg-white dark:bg-zinc-900 p-4 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-sm">
                             <span class="bg-emerald-600 text-white font-black px-3 py-1 rounded-lg text-sm">{{ $index + 1 }}</span>
                             <p class="font-bold text-zinc-700 dark:text-zinc-300">{{ $misi }}</p>
                         </li>
@@ -62,11 +62,10 @@
         {{-- 3. TUJUAN --}}
         <section class="py-20 bg-zinc-50 dark:bg-zinc-800/50">
 
-                                       <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="max-w-4xl mx-auto px-6 text-center">
                 <h2 class="text-3xl font-black uppercase mb-12">Tujuan Strategis</h2>
                 <div class="grid md:grid-cols-2 gap-6 text-left">
-
-                                               <div class="p-6 bg-white dark:bg-zinc-900 rounded-2xl border-t-4 border-emerald-600 shadow-md">
+                    <div class="p-6 bg-white dark:bg-zinc-900 rounded-2xl border-t-4 border-emerald-600 shadow-md">
                         <p class="font-bold text-zinc-600 dark:text-zinc-400">Menurunkan tingkat beban pencemaran pada air, udara, dan tanah di wilayah Kabupaten Bangkalan secara signifikan.</p>
                     </div>
                     <div class="p-6 bg-white dark:bg-zinc-900 rounded-2xl border-t-4 border-emerald-600 shadow-md">
@@ -82,7 +81,7 @@
                 <h2 class="text-3xl font-black mb-16 text-center">Struktur Organisasi</h2>
                 <div class="relative group">
                     @if($struktural)
-                        <div class="overflow-hidden rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 p-2">
+                        <div class="overflow-hidden rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-900 bg-zinc-50 dark:bg-zinc-800/50 p-2">
                             <img 
                                 src="{{ asset('storage/' . $struktural->photo_path) }}" 
                                 alt="Struktur Organisasi DLH" 
@@ -98,7 +97,7 @@
                         @endif
                     @else
                         {{-- Tampilan Fallback jika data kosong --}}
-                        <div class="flex flex-col items-center justify-center py-20 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
+                        <div class="flex flex-col items-center justify-center py-20 px-8 border-2 border-dashed border-zinc-200 dark:border-zinc-900 rounded-2xl">
                             <flux:icon.user-group class="w-16 h-16 text-zinc-300 mb-4" />
                             <p class="text-zinc-500 font-medium">Bagan struktur organisasi belum tersedia.</p>
                         </div>

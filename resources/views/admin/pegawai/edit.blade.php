@@ -3,10 +3,15 @@
 
         <flux:card>
             {{-- Header Form --}}
-            <div class="mb-6">
-                <flux:heading size="lg" class="text-zinc-700 dark:text-white">Edit Data Pegawai</flux:heading>
-                <p class="text-sm text-zinc-500 dark:text-white">Ubah data biodata untuk <b>{{ $pegawai->name }}</b>.
-                </p>
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <flux:heading size="lg" class="text-zinc-700 dark:text-white">Edit Data Pegawai</flux:heading>
+                    <p class="text-sm text-zinc-500 dark:text-white">Ubah data biodata untuk <b>{{ $pegawai->name }}</b>.
+                    </p>
+                </div>
+                <flux:button href="{{ route('pegawai.index') }}" variant="ghost" icon="arrow-left" wire:navigate>
+                    Kembali
+                </flux:button>
             </div>
 
             {{-- Form Start --}}

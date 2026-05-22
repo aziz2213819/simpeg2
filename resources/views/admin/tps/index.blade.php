@@ -1,6 +1,5 @@
 <x-layouts::app :title="__('Manajemen Titik TPS')">
     {{-- 1. CSS ASSETS --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.11.0/dist/geosearch.css" />
     
     <style>
@@ -16,111 +15,88 @@
         .leaflet-container { cursor: crosshair !important; }
     </style>
 
-    <div class="p-8 max-w-7xl mx-auto space-y-8">
-        {{-- Pesan Notifikasi --}}
-        @if (session('success'))
-            <flux:card class="bg-emerald-50 border-emerald-200 p-4 mb-4">
-                <div class="flex items-center gap-3 text-emerald-700">
-                    <flux:icon.check-circle class="w-5 h-5" />
-                    <span class="font-medium">{{ session('success') }}</span>
-                </div>
-            </flux:card>
-        @endif
+    <div class="p-6 space-y-6">
+        
+        <x-managed-message />
 
-        <flux:card class="overflow-hidden border-none shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-800">
-            {{-- Header Section --}}
-            <div class="flex flex-col md:flex-row justify-between items-end gap-4 p-6">
+        <flux:card>
+            {{-- Header --}}
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                 <div>
-                    <flux:heading size="xl" class="font-bold tracking-tight">Data Titik TPS</flux:heading>
-                    <flux:subheading class="mt-1 text-zinc-500">Kelola lokasi tempat pembuangan sementara dan jadwal pengangkutan.</flux:subheading>
+                    <flux:heading size="lg">Data Titik TPS</flux:heading>
+                    <flux:subheading>Kelola lokasi tempat pembuangan sementara dan jadwal pengangkutan.</flux:subheading>
                 </div>
-                {{-- Tombol Tambah --}}
-                <flux:modal.trigger name="create-tps">
-                    <flux:button variant="primary" icon="plus" class="bg-emerald-600" onclick="startMapProcess()">Tambah TPS</flux:button>
-                </flux:modal.trigger>
-            </div>
 
-            {{-- Filter Bar --}}
-            <div class="p-4 border-t border-zinc-100 bg-zinc-50/50">
-                <form action="{{ route('admin.tps.index') }}" method="GET" class="flex flex-wrap items-center gap-3">
-                    <div class="flex-1 min-w-75">
-                        <flux:input name="search" icon="magnifying-glass" value="{{ request('search') }}"
-                            placeholder="Cari nama TPS atau alamat..." class="border-zinc-200" />
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <flux:select name="kecamatan" onchange="this.form.submit()" class="min-w-45">
+                <div class="flex flex-col sm:flex-row items-center gap-4">
+                    {{-- Search Form --}}
+                    <form action="{{ route('admin.tps.index') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-2">
+                        <flux:select name="kecamatan" onchange="this.form.submit()">
                             <option value="">Semua Kecamatan</option>
                             <option value="socah" {{ request('kecamatan') == 'socah' ? 'selected' : '' }}>Socah</option>
                             <option value="bangkalan" {{ request('kecamatan') == 'bangkalan' ? 'selected' : '' }}>Bangkalan</option>
                             <option value="kamal" {{ request('kecamatan') == 'kamal' ? 'selected' : '' }}>Kamal</option>
                         </flux:select>
-                    </div>
-                </form>
+                        <flux:input name="search" icon="magnifying-glass" value="{{ request('search') }}" placeholder="Cari nama TPS..." />
+                        <flux:button type="submit" class="cursor-pointer">Cari</flux:button>
+                    </form>
+
+                    {{-- Tombol Tambah --}}
+                    <flux:modal.trigger name="create-tps">
+                        <flux:button icon="plus" class="cursor-pointer" onclick="startMapProcess()">Tambah TPS</flux:button>
+                    </flux:modal.trigger>
+                </div>
             </div>
 
             {{-- Table --}}
             <flux:table>
                 <flux:table.columns>
-                    <flux:table.column class="pl-6 uppercase text-[11px] font-bold">Nama TPS & Lokasi</flux:table.column>
-                    <flux:table.column class="uppercase text-[11px] font-bold">Kecamatan</flux:table.column>
-                    <flux:table.column class="uppercase text-[11px] font-bold">Jadwal Angkut</flux:table.column>
-                    <flux:table.column class="uppercase text-[11px] font-bold text-center">Peta</flux:table.column>
-                    <flux:table.column class="pr-6 text-right uppercase text-[11px] font-bold">Opsi</flux:table.column>
+                    <flux:table.column>Nama TPS & Lokasi</flux:table.column>
+                    <flux:table.column>Kecamatan</flux:table.column>
+                    <flux:table.column>Jadwal Angkut</flux:table.column>
+                    <flux:table.column>Peta</flux:table.column>
+                    <flux:table.column>Aksi</flux:table.column>
                 </flux:table.columns>
 
                 <flux:table.rows>
                     @forelse($tps_data as $tps)
                         <flux:table.row>
-                            <flux:table.cell class="pl-6">
-                                <div>
-                                    <div class="font-semibold leading-tight">{{ $tps->nama_tps }}</div>
-                                    <div class="text-[10px] text-zinc-500 mt-1 italic">{{ $tps->alamat }}</div>
-                                </div>
+                            <flux:table.cell>
+                                <div class="font-bold">{{ $tps->nama_tps }}</div>
+                                <div class="text-xs text-zinc-500 mt-0.5">{{ $tps->alamat }}</div>
                             </flux:table.cell>
 
                             <flux:table.cell>
-                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-zinc-100 text-zinc-600">
-                                    {{ $tps->kecamatan }}
-                                </span>
+                                <flux:badge>{{ ucfirst($tps->kecamatan) }}</flux:badge>
                             </flux:table.cell>
 
                             <flux:table.cell>
-                                <div class="flex items-center gap-1.5 text-xs font-medium text-emerald-600">
-                                    <flux:icon.clock class="w-3.5 h-3.5" />
-                                    {{ $tps->jadwal }}
-                                </div>
+                                {{ $tps->jadwal }}
                             </flux:table.cell>
 
-                            <flux:table.cell class="text-center">
-                                <a href="http://www.google.com/maps/place/{{ $tps->lat }},{{ $tps->lng }}" target="_blank" class="text-blue-500 hover:scale-110 transition-transform inline-block">
-                                    <flux:icon.map class="w-5 h-5" />
-                                </a>
+                            <flux:table.cell>
+                                <button class="text-blue-500 hover:underline text-xs flex items-center gap-1 mt-1 cursor-pointer" 
+                                    x-data x-on:click="$dispatch('open-preview-map', { lat: {{ $tps->lat }}, lng: {{ $tps->lng }}, name: '{{ $tps->nama_tps }}' })">
+                                    <flux:icon.map class="w-3.5 h-3.5" /> Lihat Peta
+                                </button>
                             </flux:table.cell>
-                            <flux:table.cell align="right" class="pr-6">
-                                <div class="flex items-center justify-end gap-2">
-                                    {{-- TOMBOL EDIT (TAMBAHKAN INI) --}}
-                                    <flux:button 
-                                        as="a" 
-                                        href="{{ route('admin.tps.edit', $tps->id) }}" 
-                                        variant="ghost" 
-                                        size="sm" 
-                                        icon="pencil" 
-                                        class="text-zinc-400 hover:text-blue-600" 
-                                    />
 
-                                    {{-- TOMBOL HAPUS (YANG SUDAH ADA) --}}
-                                    <form action="{{ route('admin.tps.destroy', $tps->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <flux:button type="submit" variant="ghost" size="sm" icon="trash" class="text-zinc-400 hover:text-red-600" />
-                                    </form>
-                                </div>
+                            <flux:table.cell class="flex gap-2">
+                                <flux:button size="sm" href="{{ route('admin.tps.edit', $tps->id) }}" class="cursor-pointer">
+                                    Edit
+                                </flux:button>
+
+                                <form action="{{ route('admin.tps.destroy', $tps->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <flux:button type="submit" size="sm" variant="danger" class="cursor-pointer">
+                                        Hapus
+                                    </flux:button>
+                                </form>
                             </flux:table.cell>
                         </flux:table.row>
                     @empty
                         <flux:table.row>
-                            <flux:table.cell colspan="5" class="text-center py-20 text-zinc-400 italic">
+                            <flux:table.cell colspan="5" class="text-center py-8 text-zinc-500">
                                 Belum ada data TPS.
                             </flux:table.cell>
                         </flux:table.row>
@@ -128,11 +104,54 @@
                 </flux:table.rows>
             </flux:table>
 
-            <div class="p-4 border-t border-zinc-100">
+            <div class="mt-4">
                 {{ $tps_data->links() }}
             </div>
         </flux:card>
     </div>
+
+    {{-- MODAL PETA PREVIEW --}}
+    <flux:modal name="preview-map-modal" class="md:w-3/4 max-w-4xl" 
+        x-data="{ 
+            mapPreview: null, 
+            markerPreview: null,
+            lat: 0,
+            lng: 0,
+            initPreviewMap(lat, lng, name) {
+                this.lat = lat;
+                this.lng = lng;
+                if (!this.mapPreview) {
+                    this.mapPreview = L.map('tps-preview-map', { attributionControl: false }).setView([lat, lng], 15);
+                    L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                        maxZoom: 20,
+                        subdomains:['mt0','mt1','mt2','mt3']
+                    }).addTo(this.mapPreview);
+                    this.markerPreview = L.marker([lat, lng]).addTo(this.mapPreview);
+                } else {
+                    this.mapPreview.setView([lat, lng], 15);
+                    this.markerPreview.setLatLng([lat, lng]);
+                }
+                this.markerPreview.bindPopup(`<b>${name}</b>`).openPopup();
+                
+                // Invalidate size when modal opens to fix grey tiles
+                setTimeout(() => { this.mapPreview.invalidateSize(); }, 300);
+            }
+        }"
+        @open-preview-map.window="$flux.modal('preview-map-modal').show(); initPreviewMap($event.detail.lat, $event.detail.lng, $event.detail.name);"
+    >
+        <div class="p-4">
+            <flux:heading size="lg" class="mb-4">Lokasi TPS</flux:heading>
+            <div id="tps-preview-map" style="height: 400px; width: 100%; border-radius: 0.5rem; z-index: 1;"></div>
+            <div class="mt-4 flex justify-end gap-2">
+                <a x-bind:href="`https://www.google.com/maps/place/${lat},${lng}`" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    <flux:icon.map class="w-4 h-4" /> Google Maps
+                </a>
+                <flux:modal.close>
+                    <flux:button variant="ghost">Tutup</flux:button>
+                </flux:modal.close>
+            </div>
+        </div>
+    </flux:modal>
 
     {{-- MODAL TAMBAH TPS --}}
     <flux:modal name="create-tps" class="max-w-xl">
@@ -177,7 +196,7 @@
     </flux:modal>
 
     {{-- 3. JAVASCRIPT LOGIC --}}
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ asset('leaflet/leaflet.js') }}"></script>
     <script src="https://unpkg.com/leaflet-geosearch@3.11.0/dist/bundle.min.js"></script>
 
     <script>
@@ -188,7 +207,7 @@
             if (map != undefined) { map.remove(); }
 
             // Fokus ke Bangkalan
-            map = L.map('map-picker').setView([-7.045484, 112.744116], 16);
+            map = L.map('map-picker', { attributionControl: false }).setView([-7.045484, 112.744116], 16);
 
             // PAKAI LAYER GOOGLE MAPS HYBRID (Satelit + Jalan)
             // Biar admin bisa liat bangunan/tong sampah asli dari langit

@@ -9,13 +9,13 @@ class LoginResponse implements LoginResponseContract
     {
         $user = auth()->user();
 
+        if ($user->role === 'petugas_sampah') {
+            return redirect()->route('petugas.dashboard');
+        }
+
         if (is_null($user->employee_id)) {
             return redirect()->route('dashboard');
         }
-
-        // if ($user->role == 'admin_simpeg') {
-        //     return redirect()->route('dashboard');
-        // }
 
         return redirect()->route('pegawai.homepage');
     }

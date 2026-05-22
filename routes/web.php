@@ -4,10 +4,13 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\PetugasSampahController;
+use App\Http\Controllers\AdminTpsReportController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StrukturalController;
 use App\Http\Controllers\TamuController;
 use App\Http\Controllers\TpsController;
+use App\Http\Controllers\WorkerController;
 use App\Livewire\PositionLive;
 use App\Livewire\RankGradeLive;
 use Illuminate\Support\Facades\Route;
@@ -26,20 +29,17 @@ Route::get('/alur-lapor', [TamuController::class, 'alurLapor'])->name('alur-lapo
 Route::get('/cek-status', [TamuController::class, 'cekStatus'])->name('cek.status');
 Route::get('/lokasi-tps', [TamuController::class, 'tpsWarga'])->name('tamu.tps');
 
-
 // Detail Pengaduan dipindah ke LUAR agar warga bisa lihat progress lewat link/ID Tracking
 Route::get('/pengaduan/{pengaduan}', [ReportController::class, 'show'])->name('pengaduan.show');
-
 
 // --- AKSES ADMIN (DASHBOARD UMUM) ---
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard'); // trigger service
 });
 
-
 // --- KHUSUS ADMIN SIMPEG ---
 Route::middleware(['auth', 'admin', 'isAdminSimpeg'])->group(function () {
-    Route::prefix("admin")->group(function () {
+    Route::prefix('admin')->group(function () {
         Route::get('/pangkat', RankGradeLive::class)->name('pangkat.index');
         Route::get('/jabatan', PositionLive::class)->name('jabatan.index');
         Route::resource('pegawai', EmployeeController::class);
@@ -48,34 +48,37 @@ Route::middleware(['auth', 'admin', 'isAdminSimpeg'])->group(function () {
 
         Route::resource('struktural', StrukturalController::class)->except(['show', 'edit', 'update']);
         Route::patch('struktural/{struktural}/activate', [StrukturalController::class, 'activate'])->name('struktural.activate');
+
     });
     Route::get('/pegawai/export', [EmployeeController::class, 'export'])->name('pegawai.export');
     Route::get('/pegawai/pdf-kgb', [EmployeeController::class, 'exportPdfKgb'])->name('pegawai.kgb.pdf');
     Route::get('/pegawai/pdf-pensiun', [EmployeeController::class, 'exportPdfPensiun'])->name('pegawai.pensiun.pdf');
 });
 
-
 // --- KHUSUS ADMIN SAMPAH (DLH CARE) ---
 Route::middleware(['auth', 'admin', 'isAdminSampah'])->group(function () {
-    Route::prefix("admin")->group(function () {
+    Route::prefix('admin')->group(function () {
         Route::get('/pengaduan', [ReportController::class, 'index'])->name('admin.pengaduan.index');
         Route::patch('/pengaduan/{pengaduan}/status', [ReportController::class, 'updateStatus'])->name('admin.pengaduan.status');
         Route::delete('/pengaduan/{pengaduan}', [ReportController::class, 'destroy'])->name('admin.pengaduan.destroy');
         // --- ROUTE TPS ---
         Route::get('/tps', [TpsController::class, 'index'])->name('admin.tps.index');
         Route::post('/tps', [TpsController::class, 'store'])->name('admin.tps.store');
-        
+
         // TAMBAHKAN DUA BARIS INI:
         Route::get('/tps/{tps}/edit', [TpsController::class, 'edit'])->name('admin.tps.edit');
         Route::put('/tps/{tps}', [TpsController::class, 'update'])->name('admin.tps.update');
-        
+
         Route::delete('/tps/{tps}', [TpsController::class, 'destroy'])->name('admin.tps.destroy');
         // Route Simpan Komentar Petugas
         Route::post('/pengaduan/{pengaduan}/comment', [ReportController::class, 'storeComment'])->name('admin.pengaduan.comment');
+
+        Route::get('/tps-reports', [AdminTpsReportController::class, 'index'])->name('admin.tps-reports.index');
+
+        Route::resource('workers', WorkerController::class);
     });
 });
 
-    
 // --- AKSES PEGAWAI ---
 Route::middleware(['auth', 'isPegawai'])->group(function () {
     Route::get('/homepage', [PegawaiController::class, 'index'])->name('pegawai.homepage');
@@ -93,6 +96,13 @@ Route::middleware(['auth', 'isPegawai'])->group(function () {
     Route::post('/pegawai/2fa/enable', [PegawaiController::class, 'enable2fa'])->name('pegawai.2fa.enable');
     Route::delete('/pegawai/2fa/disable', [PegawaiController::class, 'disable2fa'])->name('pegawai.2fa.disable');
     Route::post('/2fa/confirm', [PegawaiController::class, 'confirm2fa'])->name('pegawai.2fa.confirm');
+});
+
+// --- AKSES PETUGAS SAMPAH ---
+Route::middleware(['auth', 'isPetugasSampah'])->group(function () {
+    Route::get('/petugas/dashboard', [PetugasSampahController::class, 'dashboard'])->name('petugas.dashboard');
+    Route::get('/petugas/laporan', [PetugasSampahController::class, 'laporan'])->name('petugas.laporan');
+    Route::post('/petugas/laporan', [PetugasSampahController::class, 'storeLaporan'])->name('petugas.laporan.store');
 });
 
 require __DIR__.'/settings.php';

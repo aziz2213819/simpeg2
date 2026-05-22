@@ -8,11 +8,11 @@ use App\Models\Notification;
 use App\Models\Position;
 use App\Models\RankGrade;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Carbon;
 
 class EmployeeController extends Controller
 {
@@ -29,7 +29,7 @@ class EmployeeController extends Controller
         $employees = Employee::query()
             ->with(['rankGrade'])
             ->when($search, function ($query, $search) {
-                return $query->where(function($q) use ($search) {
+                return $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%");
                     // ->orWhere('nip', 'like', "%{$search}%");
                 });
@@ -46,6 +46,7 @@ class EmployeeController extends Controller
             ->latest()
             ->paginate(10)
             ->withQueryString();
+
         return view('admin.pegawai.index', compact('employees', 'search', 'rank_grade_id', 'rankGrades'));
     }
 
@@ -56,6 +57,7 @@ class EmployeeController extends Controller
     {
         $rank_grades = RankGrade::all();
         $positions = Position::all();
+
         return view('admin.pegawai.create', compact('rank_grades', 'positions'));
     }
 
@@ -72,44 +74,44 @@ class EmployeeController extends Controller
 
             // Validasi Biodata (Employees)
             // 'nip'           => 'required|string|digits:18|unique:employees,nip',
-            'name'          => 'required|string|max:255',
-            'birth_date'    => 'required|date',
-            'gender'        => 'required|in:l,p',
-            'status'        => 'required|string',
+            'name' => 'required|string|max:255',
+            'birth_date' => 'required|date',
+            'gender' => 'required|in:l,p',
+            'status' => 'required|string',
             'education_level' => 'required|in:SD,SMP,SMA,D1,D2,D3,D4,S1,S2,S3',
             'education_detail' => 'nullable|string|max:255',
-            'tmt_start'     => 'required|date',
-            'tmt_end'       => 'nullable|date|after_or_equal:tmt_start',
-            'tmt_kgb'       => 'required|date|after_or_equal:tmt_start',
-            'type'          => 'required|in:ASN,Non ASN',
-            'position_id'   => 'required|exists:positions,id',
+            'tmt_start' => 'required|date',
+            'tmt_end' => 'nullable|date|after_or_equal:tmt_start',
+            'tmt_kgb' => 'required|date|after_or_equal:tmt_start',
+            'type' => 'required|in:ASN,Non ASN',
+            'position_id' => 'required|exists:positions,id',
             'rank_grade_id' => 'nullable|exists:rank_grades,id',
         ];
 
         // 2. Definisikan Pesan Bahasa Indonesia
         $messages = [
-            'required'        => 'Kolom :attribute wajib diisi.',
-            'unique'          => ':attribute ini sudah terdaftar di sistem.',
-            'digits'          => ':attribute harus berupa angka dan tepat :digits digit.',
-            'date'            => 'Format :attribute harus berupa tanggal yang valid.',
-            'after_or_equal'  => 'Tanggal :attribute harus sama dengan atau setelah TMT Start.',
-            'in'              => 'Pilihan :attribute tidak valid.',
-            'exists'          => 'Data :attribute yang dipilih tidak ditemukan.',
+            'required' => 'Kolom :attribute wajib diisi.',
+            'unique' => ':attribute ini sudah terdaftar di sistem.',
+            'digits' => ':attribute harus berupa angka dan tepat :digits digit.',
+            'date' => 'Format :attribute harus berupa tanggal yang valid.',
+            'after_or_equal' => 'Tanggal :attribute harus sama dengan atau setelah TMT Start.',
+            'in' => 'Pilihan :attribute tidak valid.',
+            'exists' => 'Data :attribute yang dipilih tidak ditemukan.',
         ];
 
         // 3. Ubah nama atribut agar lebih enak dibaca user (Opsional)
         $attributes = [
-            'name'          => 'Nama Lengkap',
-            'birth_date'    => 'Tanggal Lahir',
-            'gender'        => 'Jenis Kelamin',
-            'status'        => 'Status Pegawai',
+            'name' => 'Nama Lengkap',
+            'birth_date' => 'Tanggal Lahir',
+            'gender' => 'Jenis Kelamin',
+            'status' => 'Status Pegawai',
             'education_level' => 'Pendidikan Terakhir',
             'education_detail' => 'Detail Pendidikan',
-            'tmt_start'     => 'TMT Pangkat Awal',
-            'tmt_end'       => 'TMT Pangkat Akhir',
-            'tmt_kgb'       => 'TMT KGB',
-            'type'          => 'Tipe Pegawai',
-            'position_id'   => 'Jabatan',
+            'tmt_start' => 'TMT Pangkat Awal',
+            'tmt_end' => 'TMT Pangkat Akhir',
+            'tmt_kgb' => 'TMT KGB',
+            'type' => 'Tipe Pegawai',
+            'position_id' => 'Jabatan',
             'rank_grade_id' => 'Pangkat/Gol',
         ];
 
@@ -120,17 +122,17 @@ class EmployeeController extends Controller
         DB::transaction(function () use ($validatedData) {
             $employee = Employee::create([
                 // 'nip'           => $validatedData['nip'],
-                'name'          => $validatedData['name'],
-                'birth_date'    => $validatedData['birth_date'],
-                'gender'        => $validatedData['gender'],
-                'status'        => $validatedData['status'],
+                'name' => $validatedData['name'],
+                'birth_date' => $validatedData['birth_date'],
+                'gender' => $validatedData['gender'],
+                'status' => $validatedData['status'],
                 'education_level' => $validatedData['education_level'],
                 'education_detail' => $validatedData['education_detail'],
-                'tmt_start'     => $validatedData['tmt_start'],
-                'tmt_end'       => $validatedData['tmt_end'] ?? null,
-                'tmt_kgb'       => $validatedData['tmt_kgb'],
-                'type'          => $validatedData['type'],
-                'position_id'   => $validatedData['position_id'] ?? null,
+                'tmt_start' => $validatedData['tmt_start'],
+                'tmt_end' => $validatedData['tmt_end'] ?? null,
+                'tmt_kgb' => $validatedData['tmt_kgb'],
+                'type' => $validatedData['type'],
+                'position_id' => $validatedData['position_id'] ?? null,
                 'rank_grade_id' => $validatedData['rank_grade_id'] ?? null,
             ]);
 
@@ -147,13 +149,13 @@ class EmployeeController extends Controller
             $birthYear = date('Y', strtotime($validatedData['birth_date']));
 
             // 4. Gabungkan agar unik
-            $uniqueUsername = $cleanName . $birthYear;
+            $uniqueUsername = $cleanName.$birthYear;
 
             User::create([
-                'name'          => $validatedData['name'],
-                'employee_id'   => $employee->id,
-                'email'         => "{$uniqueUsername}@gmail.com",
-                'password'      => bcrypt('dlhbangkalan564738'), 
+                'name' => $validatedData['name'],
+                'employee_id' => $employee->id,
+                'email' => "{$uniqueUsername}@gmail.com",
+                'password' => bcrypt(env('DEFAULT_EMPLOYEE_PASSWORD')),
             ]);
         });
 
@@ -175,13 +177,14 @@ class EmployeeController extends Controller
     {
         $rank_grades = RankGrade::all();
         $positions = Position::all();
+
         // dd($pegawai);
         return view('admin.pegawai.edit', compact('pegawai', 'rank_grades', 'positions'));
     }
-        
-        /**
-         * Update the specified resource in storage.
-        */
+
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, Employee $pegawai)
     {
         $oldTmtKgb = $pegawai->tmt_kgb;
@@ -191,40 +194,40 @@ class EmployeeController extends Controller
             // 'email'         => 'required|email|unique:users,email,' . ($user ? $user->id : ''),
             // 'password'      => 'nullable|min:8',
             // 'nip'           => 'required|string|digits:18|unique:employees,nip,' . $pegawai->id,
-            'name'          => 'required|string|max:255',
-            'birth_date'    => 'required|date',
-            'gender'        => 'required|in:l,p',
-            'status'        => 'required|string',
+            'name' => 'required|string|max:255',
+            'birth_date' => 'required|date',
+            'gender' => 'required|in:l,p',
+            'status' => 'required|string',
             'education_level' => 'required|in:SD,SMP,SMA,D1,D2,D3,D4,S1,S2,S3',
             'education_detail' => 'required|string',
-            'tmt_start'     => 'required|date',
-            'tmt_end'       => 'nullable|date|after_or_equal:tmt_start',
-            'tmt_kgb'       => 'required|date|after_or_equal:tmt_start',
-            'type'          => 'required|string',
-            'position_id'   => 'nullable|exists:positions,id',
+            'tmt_start' => 'required|date',
+            'tmt_end' => 'nullable|date|after_or_equal:tmt_start',
+            'tmt_kgb' => 'required|date|after_or_equal:tmt_start',
+            'type' => 'required|string',
+            'position_id' => 'nullable|exists:positions,id',
             'rank_grade_id' => 'nullable|exists:rank_grades,id',
         ];
 
         $messages = [
-            'required'        => 'Kolom :attribute wajib diisi.',
-            'unique'          => ':attribute ini sudah dipakai orang lain.',
-            'digits'          => ':attribute harus berupa angka dan tepat :digits digit.',
-            'date'            => 'Format :attribute harus berupa tanggal yang valid.',
-            'after_or_equal'  => 'Tanggal :attribute harus sama dengan atau setelah TMT Awal.',
-            'in'              => 'Pilihan pada kolom :attribute tidak valid.',
-            'exists'          => 'Data :attribute yang dipilih tidak ditemukan.',
+            'required' => 'Kolom :attribute wajib diisi.',
+            'unique' => ':attribute ini sudah dipakai orang lain.',
+            'digits' => ':attribute harus berupa angka dan tepat :digits digit.',
+            'date' => 'Format :attribute harus berupa tanggal yang valid.',
+            'after_or_equal' => 'Tanggal :attribute harus sama dengan atau setelah TMT Awal.',
+            'in' => 'Pilihan pada kolom :attribute tidak valid.',
+            'exists' => 'Data :attribute yang dipilih tidak ditemukan.',
         ];
 
         $attributes = [
             // 'nip'           => 'NIP',
-            'name'          => 'Nama',
-            'birth_date'    => 'Tanggal Lahir',
-            'gender'        => 'Jenis Kelamin',
-            'tmt_start'     => 'TMT Pangkat Awal',
-            'tmt_end'       => 'TMT Pangkat Akhir',
-            'tmt_kgb'       => 'TMT Kenaikan Gaji Berkala',
-            'type'          => 'Tipe Pegawai',
-            'position_id'   => 'Jabatan',
+            'name' => 'Nama',
+            'birth_date' => 'Tanggal Lahir',
+            'gender' => 'Jenis Kelamin',
+            'tmt_start' => 'TMT Pangkat Awal',
+            'tmt_end' => 'TMT Pangkat Akhir',
+            'tmt_kgb' => 'TMT Kenaikan Gaji Berkala',
+            'type' => 'Tipe Pegawai',
+            'position_id' => 'Jabatan',
             'rank_grade_id' => 'Pangkat/Gol',
         ];
 
@@ -234,17 +237,17 @@ class EmployeeController extends Controller
             // 1. Update Biodata Pegawai
             $pegawai->update([
                 // 'nip'           => $validatedData['nip'],
-                'name'          => $validatedData['name'],
-                'birth_date'    => $validatedData['birth_date'],
-                'gender'        => $validatedData['gender'],
-                'status'        => $validatedData['status'],
+                'name' => $validatedData['name'],
+                'birth_date' => $validatedData['birth_date'],
+                'gender' => $validatedData['gender'],
+                'status' => $validatedData['status'],
                 'education_level' => $validatedData['education_level'],
                 'education_detail' => $validatedData['education_detail'],
-                'tmt_start'     => $validatedData['tmt_start'],
-                'tmt_end'       => $validatedData['tmt_end'] ?? null,
-                'tmt_kgb'       => $validatedData['tmt_kgb'],
-                'type'          => $validatedData['type'],
-                'position_id'   => $validatedData['position_id'] ?? null,
+                'tmt_start' => $validatedData['tmt_start'],
+                'tmt_end' => $validatedData['tmt_end'] ?? null,
+                'tmt_kgb' => $validatedData['tmt_kgb'],
+                'type' => $validatedData['type'],
+                'position_id' => $validatedData['position_id'] ?? null,
                 'rank_grade_id' => $validatedData['rank_grade_id'] ?? null,
             ]);
 
@@ -262,7 +265,7 @@ class EmployeeController extends Controller
             $birthYear = date('Y', strtotime($validatedData['birth_date']));
 
             // 4. Gabungkan agar unik
-            $uniqueUsername = $cleanName . $birthYear;
+            $uniqueUsername = $cleanName.$birthYear;
 
             $user->update([
                 'name' => $validatedData['name'],
@@ -274,7 +277,7 @@ class EmployeeController extends Controller
             $oldTmtKgb = Carbon::parse($oldTmtKgb)->addYears(2)->format('Y-m-d');
             $query = Notification::where('employee_id', $pegawai->id)
                 ->where('type', 'gaji_berkala')
-                ->where('title', 'like', '%' . $oldTmtKgb . '%');
+                ->where('title', 'like', '%'.$oldTmtKgb.'%');
             $notif = $query->latest()->first();
             $result = $notif?->delete();
         }
@@ -290,7 +293,7 @@ class EmployeeController extends Controller
 
             $query = Notification::where('employee_id', $pegawai->id)
                 ->where('type', 'pangkat')
-                ->where('title', 'like', '%' . $targetDate . '%');
+                ->where('title', 'like', '%'.$targetDate.'%');
             $notif = $query->latest()->first();
             $result = $notif?->delete();
         }
@@ -309,7 +312,7 @@ class EmployeeController extends Controller
 
             $query = Notification::where('employee_id', $pegawai->id)
                 ->where('type', 'pensiun')
-                ->where('title', 'like', '%' . $targetDate . '%');
+                ->where('title', 'like', '%'.$targetDate.'%');
             $notif = $query->latest()->first();
             $result = $notif?->delete();
         }
@@ -326,15 +329,17 @@ class EmployeeController extends Controller
         $pegawai->delete();
 
         return redirect()->route('pegawai.index')
-                         ->with('success', 'Data pegawai berhasil dihapus.');
+            ->with('success', 'Data pegawai berhasil dihapus.');
     }
 
-    public function export(Request $request) {
+    public function export(Request $request)
+    {
         $filters = array_filter($request->only([
             'education_level',
             'gender',
-            'rank_grade_id'
+            'rank_grade_id',
         ]));
+
         return Excel::download(
             new EmployeesExport($filters), 'pegawai.xlsx'
         );
@@ -346,7 +351,7 @@ class EmployeeController extends Controller
 
         // rentang target KGB
         $start = $now->copy()->addMonth()->subYears(2)->startOfMonth();
-        $end   = $now->copy()->addMonths(2)->subYears(2)->endOfMonth();
+        $end = $now->copy()->addMonths(2)->subYears(2)->endOfMonth();
 
         $employees = Employee::with(['rankGrade', 'position'])
             ->whereNotNull('tmt_kgb')
@@ -356,7 +361,7 @@ class EmployeeController extends Controller
 
         $periode = strtoupper(
             $start->translatedFormat('F Y')
-            . ' - ' .
+            .' - '.
             $end->translatedFormat('F Y')
         );
 
@@ -422,10 +427,10 @@ class EmployeeController extends Controller
             })
             ->values();
 
-        $title = "DAFTAR PEGAWAI MEMASUKI MASA PENSIUN";
+        $title = 'DAFTAR PEGAWAI MEMASUKI MASA PENSIUN';
 
         $periode = strtoupper(
-            'PER ' . $now->translatedFormat('d F Y')
+            'PER '.$now->translatedFormat('d F Y')
         );
 
         $pdf = Pdf::loadView(

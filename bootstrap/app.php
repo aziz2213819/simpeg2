@@ -5,6 +5,7 @@ use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsAdminSampah;
 use App\Http\Middleware\IsAdminSimpeg;
 use App\Http\Middleware\IsPegawai;
+use App\Http\Middleware\IsPetugasSampah;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -21,7 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'tamu.cek' => EnsureGuestDataExists::class,
             'isAdminSimpeg' => IsAdminSimpeg::class,
             'isAdminSampah' => IsAdminSampah::class,
-            'isPegawai' => IsPegawai::class
+            'isPegawai' => IsPegawai::class,
+            'isPetugasSampah' => IsPetugasSampah::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

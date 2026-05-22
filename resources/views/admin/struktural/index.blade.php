@@ -8,7 +8,7 @@
                     <flux:heading size="lg">Bagan Struktural Instansi</flux:heading>
                     <flux:subheading>Pilih satu foto yang akan ditampilkan di halaman utama web.</flux:subheading>
                 </div>
-                <flux:button href="{{ route('struktural.create') }}" variant="primary" icon="plus" wire:navigate>
+                <flux:button href="{{ route('struktural.create') }}" icon="plus" wire:navigate>
                     Unggah Foto Baru
                 </flux:button>
             </div>

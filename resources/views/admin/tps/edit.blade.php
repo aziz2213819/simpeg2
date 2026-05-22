@@ -1,6 +1,5 @@
 <x-layouts::app :title="__('Edit Titik TPS')">
     {{-- 1. CSS ASSETS --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.11.0/dist/geosearch.css" />
     
     <style>
@@ -15,15 +14,15 @@
     </style>
 
     <div class="p-8 max-w-4xl mx-auto space-y-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <flux:heading size="xl" class="font-bold">Edit Lokasi TPS</flux:heading>
-                <flux:subheading>Ubah posisi pin atau informasi jadwal TPS ini.</flux:subheading>
-            </div>
-            <flux:button as="a" href="{{ route('admin.tps.index') }}" variant="ghost" icon="arrow-left">Kembali</flux:button>
-        </div>
 
         <flux:card class="p-6">
+            <div class="flex items-center justify-between mb-6 border-b border-zinc-100 pb-4">
+                <div>
+                    <flux:heading size="xl" class="font-bold">Edit Lokasi TPS</flux:heading>
+                    <flux:subheading>Ubah posisi pin atau informasi jadwal TPS ini.</flux:subheading>
+                </div>
+                <flux:button as="a" href="{{ route('admin.tps.index') }}" variant="ghost" icon="arrow-left">Kembali</flux:button>
+            </div>
             <form action="{{ route('admin.tps.update', $tps->id) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
@@ -57,15 +56,16 @@
 
                 <flux:input label="Jadwal Angkut" name="jadwal" value="{{ old('jadwal', $tps->jadwal) }}" />
 
-                <div class="flex gap-3 pt-4 border-t border-zinc-100">
-                    <flux:button type="submit" variant="primary" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white">Simpan Perubahan</flux:button>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100">
+                    <flux:button href="{{ route('admin.tps.index') }}" variant="subtle">Batal</flux:button>
+                    <flux:button type="submit" variant="primary" class="bg-emerald-600 hover:bg-emerald-700 text-white">Simpan Perubahan</flux:button>
                 </div>
             </form>
         </flux:card>
     </div>
 
     {{-- 2. JAVASCRIPT LOGIC --}}
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ asset('leaflet/leaflet.js') }}"></script>
     <script src="https://unpkg.com/leaflet-geosearch@3.11.0/dist/bundle.min.js"></script>
 
     <script>
@@ -75,7 +75,7 @@
             const lngAwal = {{ $tps->lng }};
 
             // Init Map
-            const map = L.map('map-edit').setView([latAwal, lngAwal], 17);
+            const map = L.map('map-edit', { attributionControl: false }).setView([latAwal, lngAwal], 17);
 
             // Layer Satelit
             L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {

@@ -2,11 +2,16 @@
     <x-floating-managed-message />
     <div class="p-6 space-y-6">
         <flux:card>
-            <div class="mb-6">
-                <flux:heading size="lg" class="text-zinc-700 dark:text-white">Kirim Pesan Notifikasi</flux:heading>
-                <p class="text-sm text-zinc-500 dark:text-white">
-                    Pesan ini akan langsung muncul di dashboard pegawai yang bersangkutan.
-                </p>
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <flux:heading size="lg" class="text-zinc-700 dark:text-white">Kirim Pesan Notifikasi</flux:heading>
+                    <p class="text-sm text-zinc-500 dark:text-white">
+                        Pesan ini akan langsung muncul di dashboard pegawai yang bersangkutan.
+                    </p>
+                </div>
+                <flux:button href="{{ route('notifikasi.index') }}" variant="ghost" icon="arrow-left" wire:navigate>
+                    Kembali
+                </flux:button>
             </div>
 
             <form action="{{ route('notifikasi.store') }}" method="POST" class="space-y-6">

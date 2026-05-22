@@ -49,6 +49,14 @@
                             :current="request()->routeIs('admin.tps.index')" wire:navigate>
                             {{ __('Titik TPS') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="user-circle" :href="route('workers.index')"
+                        :current="request()->routeIs('workers.*')" wire:navigate>
+                        {{ __('Petugas') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="clipboard-document-list" :href="route('admin.tps-reports.index')"
+                        :current="request()->routeIs('admin.tps-reports.index')" wire:navigate>
+                        {{ __('Laporan Petugas') }}
+                    </flux:sidebar.item>
                 @endif
             </flux:sidebar.group>
         </flux:sidebar.nav>

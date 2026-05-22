@@ -1,6 +1,5 @@
 <x-layouts::app.landing :title="__('Selamat Datang')">
     {{-- Tambahkan Leaflet CSS di sini --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
         /* Memastikan pin peta terlihat bagus */
@@ -118,7 +117,7 @@
     </div>
 
     {{-- Script Leaflet & Inisialisasi --}}
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ asset('leaflet/leaflet.js') }}"></script>
     <script>
         document.addEventListener("livewire:navigated", function () {
             const dlhBangkalanLat = -7.0477686; 

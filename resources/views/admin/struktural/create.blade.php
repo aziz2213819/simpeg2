@@ -1,9 +1,14 @@
 <x-layouts::app :title="__('Unggah Foto Struktural')">
     <div class="p-6 max-w-7xl mx-auto space-y-6">
         <flux:card>
-            <div class="mb-6 border-b border-zinc-200 dark:border-zinc-700 pb-4">
-                <flux:heading size="lg">Unggah Foto Struktural</flux:heading>
-                <flux:subheading>Pastikan gambar memiliki resolusi yang baik agar jelas saat dibaca.</flux:subheading>
+            <div class="flex items-center justify-between mb-6 border-b border-zinc-200 dark:border-zinc-700 pb-4">
+                <div>
+                    <flux:heading size="lg">Unggah Foto Struktural</flux:heading>
+                    <flux:subheading>Pastikan gambar memiliki resolusi yang baik agar jelas saat dibaca.</flux:subheading>
+                </div>
+                <flux:button href="{{ route('struktural.index') }}" variant="ghost" icon="arrow-left" wire:navigate>
+                    Kembali
+                </flux:button>
             </div>
 
             {{-- Jangan lupa enctype="multipart/form-data" untuk upload file --}}

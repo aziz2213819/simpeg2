@@ -4,10 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class IsAdmin
+class IsPetugasSampah
 {
     /**
      * Handle an incoming request.
@@ -16,14 +15,10 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->isAdmin()) {
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'petugas_sampah') {
             return $next($request);
         }
-        
-        if (Auth::check() && Auth::user()->role === 'petugas_sampah') {
-            return redirect()->route('petugas.dashboard');
-        }
 
-        return redirect()->route('pegawai.homepage');
+        return redirect('/')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
     }
 }
