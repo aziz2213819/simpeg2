@@ -30,6 +30,7 @@
                         <flux:table.column>TPS Lokasi</flux:table.column>
                         <flux:table.column>Status Angkut</flux:table.column>
                         <flux:table.column>Keterangan</flux:table.column>
+                        <flux:table.column>Aksi</flux:table.column>
                     </flux:table.columns>
 
                     <flux:table.rows>
@@ -37,17 +38,17 @@
                             <flux:table.row>
                                 <flux:table.cell>
                                     <div class="font-medium">{{ $report->created_at->format('d M Y') }}</div>
-                                    <div class="text-xs text-zinc-500">{{ $report->created_at->format('H:i') }} WIB</div>
+                                    <div class="text-xs text-zinc-500 dark:text-white">{{ $report->created_at->format('H:i') }} WIB</div>
                                 </flux:table.cell>
 
                                 <flux:table.cell>
                                     <div class="font-bold">{{ $report->worker->nama_petugas ?? '-' }}</div>
-                                    <div class="text-xs text-zinc-500">{{ $report->worker->jenis_kendaraan ?? '-' }} ({{ $report->worker->plat_nomor ?? '-' }})</div>
+                                    <div class="text-xs text-zinc-500 dark:text-white">{{ $report->worker->jenis_kendaraan ?? '-' }} ({{ $report->worker->plat_nomor ?? '-' }})</div>
                                 </flux:table.cell>
 
                                 <flux:table.cell>
                                     <div class="font-medium">{{ $report->tps->nama_tps ?? '-' }}</div>
-                                    <div class="text-xs text-zinc-500">{{ $report->tps->kecamatan ?? '-' }}</div>
+                                    <div class="text-xs text-zinc-500 dark:text-white">{{ $report->tps->kecamatan ?? '-' }}</div>
                                     @if($report->tps && $report->tps->lat && $report->tps->lng)
                                         <button class="text-blue-500 hover:underline text-xs flex items-center gap-1 mt-1 cursor-pointer" 
                                             x-data x-on:click="$dispatch('open-map', { lat: {{ $report->tps->lat }}, lng: {{ $report->tps->lng }}, name: '{{ $report->tps->nama_tps }}' })">
@@ -67,10 +68,38 @@
                                 <flux:table.cell class="max-w-[200px] truncate" title="{{ $report->keterangan }}">
                                     {{ $report->keterangan ?: '-' }}
                                 </flux:table.cell>
+
+                                <flux:table.cell>
+                                    <flux:modal.trigger name="delete-report-{{ $report->id }}">
+                                        <flux:button size="sm" variant="danger" class="cursor-pointer">
+                                            Hapus
+                                        </flux:button>
+                                    </flux:modal.trigger>
+
+                                    <flux:modal name="delete-report-{{ $report->id }}" class="min-w-[22rem]">
+                                        <div class="space-y-6">
+                                            <div>
+                                                <flux:heading size="lg">Hapus Laporan?</flux:heading>
+                                                <flux:subheading>Anda yakin ingin menghapus laporan ini? Tindakan ini tidak dapat dibatalkan.</flux:subheading>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <flux:spacer />
+                                                <flux:modal.close>
+                                                    <flux:button variant="ghost">Batal</flux:button>
+                                                </flux:modal.close>
+                                                <form action="{{ route('admin.tps-reports.destroy', $report->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <flux:button type="submit" variant="danger">Hapus</flux:button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </flux:modal>
+                                </flux:table.cell>
                             </flux:table.row>
                         @empty
                             <flux:table.row>
-                                <flux:table.cell colspan="5" class="text-center py-8 text-zinc-500">
+                                <flux:table.cell colspan="6" class="text-center py-8 text-zinc-500">
                                     Belum ada laporan TPS.
                                 </flux:table.cell>
                             </flux:table.row>

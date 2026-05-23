@@ -26,4 +26,10 @@ class AdminTpsReportController extends Controller
 
         return view('admin.tps_reports.index', compact('reports', 'search'));
     }
+
+    public function destroy(TpsReport $tps_report)
+    {
+        $tps_report->delete();
+        return redirect()->back()->with('success', 'Laporan TPS berhasil dihapus.');
+    }
 }

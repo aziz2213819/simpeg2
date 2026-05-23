@@ -74,6 +74,7 @@ Route::middleware(['auth', 'admin', 'isAdminSampah'])->group(function () {
         Route::post('/pengaduan/{pengaduan}/comment', [ReportController::class, 'storeComment'])->name('admin.pengaduan.comment');
 
         Route::get('/tps-reports', [AdminTpsReportController::class, 'index'])->name('admin.tps-reports.index');
+        Route::delete('/tps-reports/{tps_report}', [AdminTpsReportController::class, 'destroy'])->name('admin.tps-reports.destroy');
 
         Route::resource('workers', WorkerController::class);
     });
@@ -102,7 +103,7 @@ Route::middleware(['auth', 'isPegawai'])->group(function () {
 Route::middleware(['auth', 'isPetugasSampah'])->group(function () {
     Route::get('/petugas/dashboard', [PetugasSampahController::class, 'dashboard'])->name('petugas.dashboard');
     Route::get('/petugas/laporan', [PetugasSampahController::class, 'laporan'])->name('petugas.laporan');
-    Route::post('/petugas/laporan', [PetugasSampahController::class, 'storeLaporan'])->name('petugas.laporan.store');
+    Route::post('/petugas/laporan', [PetugasSampahController::class, 'storeLaporan'])->name('petugas.laporan.store')->middleware('throttle:3,1');
 });
 
 require __DIR__.'/settings.php';

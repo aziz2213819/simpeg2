@@ -85,13 +85,31 @@
                                     Edit
                                 </flux:button>
 
-                                <form action="{{ route('admin.tps.destroy', $tps->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <flux:button type="submit" size="sm" variant="danger" class="cursor-pointer">
+                                <flux:modal.trigger name="delete-tps-{{ $tps->id }}">
+                                    <flux:button size="sm" variant="danger" class="cursor-pointer">
                                         Hapus
                                     </flux:button>
-                                </form>
+                                </flux:modal.trigger>
+
+                                <flux:modal name="delete-tps-{{ $tps->id }}" class="min-w-[22rem]">
+                                    <div class="space-y-6">
+                                        <div>
+                                            <flux:heading size="lg">Hapus TPS?</flux:heading>
+                                            <flux:subheading>Anda yakin ingin menghapus data TPS ini? Tindakan ini tidak dapat dibatalkan.</flux:subheading>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <flux:spacer />
+                                            <flux:modal.close>
+                                                <flux:button variant="ghost">Batal</flux:button>
+                                            </flux:modal.close>
+                                            <form action="{{ route('admin.tps.destroy', $tps->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <flux:button type="submit" variant="danger">Hapus</flux:button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </flux:modal>
                             </flux:table.cell>
                         </flux:table.row>
                     @empty

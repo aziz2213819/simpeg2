@@ -82,13 +82,30 @@
 
                             <flux:table.cell class="flex justify-end gap-2">
                                 @if($notif->type === 'pangkat' && is_null($notif->status))
-                                    <form action="{{ route('notifikasi.send', $notif->id) }}" method="POST"
-                                        onsubmit="return confirm('Kirim notifikasi ini ke pegawai?')">
-                                        @csrf
-                                        <flux:button size="sm" color="blue" type="submit" class="cursor-pointer">
+                                    <flux:modal.trigger name="send-notif-{{ $notif->id }}">
+                                        <flux:button size="sm" color="blue" class="cursor-pointer">
                                             ✈ Kirim
                                         </flux:button>
-                                    </form>
+                                    </flux:modal.trigger>
+
+                                    <flux:modal name="send-notif-{{ $notif->id }}" class="min-w-[22rem]">
+                                        <div class="space-y-6">
+                                            <div>
+                                                <flux:heading size="lg">Kirim Notifikasi?</flux:heading>
+                                                <flux:subheading>Anda yakin ingin mengirim notifikasi ini ke pegawai sekarang?</flux:subheading>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <flux:spacer />
+                                                <flux:modal.close>
+                                                    <flux:button variant="ghost">Batal</flux:button>
+                                                </flux:modal.close>
+                                                <form action="{{ route('notifikasi.send', $notif->id) }}" method="POST">
+                                                    @csrf
+                                                    <flux:button type="submit" color="blue">Kirim</flux:button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </flux:modal>
                                 @endif
                                 <flux:button size="sm" href="{{ route('notifikasi.edit', $notif->id) }}" wire:navigate>
                                     Edit
