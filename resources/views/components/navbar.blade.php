@@ -46,11 +46,12 @@
     </div>
 
     {{-- MENU MOBILE --}}
-    <div id="mobileMenu" class="hidden flex-col mt-4 gap-3 md:hidden text-sm">
+    <div id="mobileMenu" class="hidden flex-col mt-4 gap-3 md:hidden text-sm bg-white dark:bg-zinc-900 p-4 rounded-xl shadow border border-zinc-100 dark:border-zinc-800">
 
-        <a href="{{ route('home') }}" class="block py-2 border-b">Beranda</a>
-        <a href="{{ route('cek.status') }}#alur-lapor" class="block py-2 border-b">Cek laporan</a>
-        <a href="{{ route('profil.dlh') }}" class="block py-2 border-b">Tentang DLH</a>
+        <a href="{{ route('home') }}" class="block py-2 border-b dark:border-zinc-800 dark:text-white">Beranda</a>
+        <a href="{{ route('pengaduan.create') }}" class="block py-2 border-b dark:border-zinc-800 dark:text-white">Buat laporan</a>
+        <a href="{{ route('cek.status') }}#alur-lapor" class="block py-2 border-b dark:border-zinc-800 dark:text-white">Cek laporan</a>
+        <a href="{{ route('profil.dlh') }}" class="block py-2 border-b dark:border-zinc-800 dark:text-white">Tentang DLH</a>
 
         @auth
             <a href="{{ auth()->user()->employee_id ? '/homepage' : '/dashboard' }}"
@@ -58,12 +59,12 @@
                 Dashboard
             </a>
         @else
-            <a href="{{ route('login') }}" class="block py-2 border text-center rounded">
+            <a href="{{ route('login') }}" class="block py-2 border dark:border-zinc-700 text-center rounded dark:text-white">
                 Login
             </a>
 
             <a href="{{ route('pengaduan.create') }}"
-               class="block py-2 bg-emerald-600 text-white text-center rounded">
+               class="block py-2 bg-emerald-600 text-white text-center rounded border border-transparent">
                 Lapor
             </a>
         @endauth

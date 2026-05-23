@@ -18,7 +18,7 @@
         <div class="space-y-4">
             <h4 class="text-white font-bold">Kontak DLH</h4>
             <ul class="space-y-2 text-sm">
-                <li>pengaduan@dlh.bangkalankab.go.id</li>
+                <li class="break-all">pengaduan@dlh.bangkalankab.go.id</li>
                 <li>(031) 1234-5678</li>
                 <li class="leading-relaxed text-xs">Jl. Soekarno Hatta No.32b, Wr 08, Mlajah, Kec. Bangkalan, Kabupaten
                     Bangkalan, Jawa Timur 69116</li>
