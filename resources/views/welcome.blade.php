@@ -10,7 +10,7 @@
         }
     </style>
 
-    <div class="text-zinc-900 font-sans">
+    <div class="text-zinc-900 font-sans overflow-x-hidden w-full">
         <x-floating-managed-message />
 
         <x-navbar />
