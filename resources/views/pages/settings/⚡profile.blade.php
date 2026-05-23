@@ -14,6 +14,16 @@ new #[Title('Profile settings')] class extends Component {
     // public string $name = '';
     public string $email = '';
 
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.max' => 'Email maksimal 255 karakter.',
+            'email.unique' => 'Email sudah terdaftar digunakan oleh akun lain.',
+        ];
+    }
+
     /**
      * Mount the component.
      */

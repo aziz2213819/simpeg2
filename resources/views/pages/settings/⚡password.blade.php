@@ -13,6 +13,19 @@ new #[Title('Password settings')] class extends Component {
     public string $password = '';
     public string $password_confirmation = '';
 
+    public function messages(): array
+    {
+        return [
+            'current_password.required' => 'Password saat ini wajib diisi.',
+            'current_password.current_password' => 'Password saat ini yang Anda masukkan salah.',
+            'password.required' => 'Password baru wajib diisi.',
+            'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+            'password.min' => 'Password baru minimal 8 karakter.',
+            'password.mixed' => 'Password harus memiliki huruf besar dan kecil.',
+            'password.numbers' => 'Password harus mengandung angka.',
+        ];
+    }
+
     /**
      * Update the password for the currently authenticated user.
      */

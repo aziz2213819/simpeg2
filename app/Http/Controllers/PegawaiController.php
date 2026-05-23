@@ -55,6 +55,11 @@ class PegawaiController extends Controller
                 'max:255',
                 'unique:users,email,' . $user->id,
             ],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.max' => 'Email maksimal 255 karakter.',
+            'email.unique' => 'Email sudah terdaftar.',
         ]);
 
         $user->email = $validated['email'];
@@ -85,10 +90,13 @@ class PegawaiController extends Controller
                 Password::min(8)->mixedCase()->numbers()
             ],
         ], [
+            'current_password.required' => 'Password lama wajib diisi.',
             'current_password.current_password' => 'Password lama yang Anda masukkan salah.',
+            'password.required' => 'Password baru wajib diisi.',
             'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
-            'password.mixed' => 'Password harus berupa huruf besar, huruf kecil, dan angka.',
-            // 197002052003121004
+            'password.min' => 'Password baru minimal 8 karakter.',
+            'password.mixed' => 'Password harus memiliki huruf besar dan kecil.',
+            'password.numbers' => 'Password harus mengandung angka.',
         ]);
         $request->user()->update([
             'password' => Hash::make($validated['password']),
@@ -117,6 +125,9 @@ class PegawaiController extends Controller
     {
         $request->validate([
             'code' => 'required|string',
+        ], [
+            'code.required' => 'Kode OTP wajib diisi.',
+            'code.string' => 'Kode OTP tidak valid.',
         ]);
 
         try {

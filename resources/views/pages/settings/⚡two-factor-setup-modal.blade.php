@@ -24,6 +24,15 @@ new class extends Component {
     #[Validate('required|string|size:6', onUpdate: false)]
     public string $code = '';
 
+    public function messages(): array
+    {
+        return [
+            'code.required' => 'Kode verifikasi wajib diisi.',
+            'code.string' => 'Kode verifikasi tidak valid.',
+            'code.size' => 'Kode verifikasi harus 6 karakter.',
+        ];
+    }
+
     /**
      * Mount the component.
      */
