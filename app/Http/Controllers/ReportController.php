@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Report;
-use App\Models\Comment; 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
@@ -22,11 +22,11 @@ class ReportController extends Controller
 
         $reports = Report::query()
             ->when($search, function ($query, $search) {
-                return $query->where(function($q) use ($search) {
+                return $query->where(function ($q) use ($search) {
                     $q->where('nama_pelapor', 'like', "%{$search}%")
-                      ->orWhere('deskripsi', 'like', "%{$search}%")
-                      ->orWhere('lokasi_manual', 'like', "%{$search}%")
-                      ->orWhere('tracking_id', 'like', "%{$search}%");
+                        ->orWhere('deskripsi', 'like', "%{$search}%")
+                        ->orWhere('lokasi_manual', 'like', "%{$search}%")
+                        ->orWhere('tracking_id', 'like', "%{$search}%");
                 });
             })
             ->when($status, function ($query, $status) {
@@ -54,9 +54,9 @@ class ReportController extends Controller
         $allReports = Report::withCount('comments')
             ->latest()
             ->get();
-        
+
         // Pastikan 'welcome' adalah nama file blade portal/landing page Anda.
-        return view('welcome', compact('allReports')); 
+        return view('welcome', compact('allReports'));
     }
 
     /**
@@ -68,9 +68,9 @@ class ReportController extends Controller
         // Eager load relasi agar performa lebih cepat dan data muncul.
         // comments.user diasumsikan agar Anda bisa menampilkan siapa yang memberi tanggapan.
         $pengaduan->load(['user', 'comments.user']);
-        
+
         // Dikirim sebagai 'item' agar sesuai dengan kodingan Blade Anda sebelumnya.
-        return view('pengaduan.show', ['item' => $pengaduan]);
+        return view('admin.pengaduan.show', ['item' => $pengaduan]);
     }
 
     /**
@@ -86,8 +86,8 @@ class ReportController extends Controller
         // Pastikan foreign key di database Anda adalah 'report_id'.
         Comment::create([
             'report_id' => $pengaduan->id,
-            'user_id'   => Auth::id(), // ID Admin/Petugas yang sedang login
-            'body'      => $request->body,
+            'user_id' => Auth::id(), // ID Admin/Petugas yang sedang login
+            'body' => $request->body,
         ]);
 
         return back()->with('success', 'Tanggapan berhasil dikirim ke publik!');
@@ -99,14 +99,14 @@ class ReportController extends Controller
     public function updateStatus(Request $request, Report $pengaduan)
     {
         $request->validate([
-            'status' => 'required|in:pending,proses,selesai'
+            'status' => 'required|in:pending,proses,selesai',
         ]);
-        
+
         $pengaduan->update([
-            'status' => $request->status
+            'status' => $request->status,
         ]);
-        
-        return back()->with('success', 'Status laporan #' . $pengaduan->tracking_id . ' diperbarui menjadi ' . $request->status);
+
+        return back()->with('success', 'Status laporan #'.$pengaduan->tracking_id.' diperbarui menjadi '.$request->status);
     }
 
     /**
@@ -129,9 +129,9 @@ class ReportController extends Controller
             });
 
             return redirect()->route('admin.pengaduan.index')->with('success', 'Laporan berhasil dihapus secara permanen.');
-            
+
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal menghapus laporan: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menghapus laporan: '.$e->getMessage());
         }
     }
 }
