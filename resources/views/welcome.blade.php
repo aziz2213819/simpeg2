@@ -33,6 +33,11 @@
                             class="bg-emerald-600 px-8 dark:text-white" wire:navigate>
                             Buat Laporan Baru
                         </flux:button>
+                        <flux:button href="{{ route('cek.status') }}" variant="ghost"
+                            class="border border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-zinc-800"
+                            wire:navigate>
+                            Cek Status
+                        </flux:button>
                         <flux:button href="{{ route('tamu.tps') }}" variant="ghost"
                             class="border border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-zinc-800"
                             wire:navigate>
