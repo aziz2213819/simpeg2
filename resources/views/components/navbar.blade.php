@@ -6,7 +6,7 @@
             <div class="flex items-center gap-2">
                 <img src="{{ asset('images/logo.png') }}" class="h-12 md:h-14" />
                 <span class="text-lg md:text-2xl font-bold dark:text-white">
-                    DLH <span class="text-emerald-600">Care</span>
+                    DLH<span class="text-emerald-600">Care</span>
                 </span>
             </div>
             {{-- <a href="{{ route('profil.dlh') }}"
